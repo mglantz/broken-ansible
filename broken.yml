@@ -1,0 +1,17 @@
+---
+- name: Patch system and reboot it if software was updated
+  hosts: all
+  become: yes
+  tasks:
+ - name: Upgrade all packages to latest version
+   package:
+     name: '*'
+     state: latest
+   register: system_update_status
+      
+  - name: Reboot system if software where updated
+    reboot:
+      reboot_timeout: 3600
+      test_command: uptime
+    when: system_update_status is changed
+      
